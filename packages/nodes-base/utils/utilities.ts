@@ -76,22 +76,22 @@ export const flattenKeys = (obj: IDataObject, prefix: string[] = []): IDataObjec
  *
  */
 
-export function flatten<T>(nestedArray: T[][]) {
-	const result = [];
+type NestedArray<T> = Array<T | NestedArray<T>>;
 
-	(function loop(array: T[] | T[][]) {
-		for (let i = 0; i < array.length; i++) {
-			if (Array.isArray(array[i])) {
-				loop(array[i] as T[]);
-			} else {
-				result.push(array[i]);
-			}
+export function flatten<T>(nestedArray: NestedArray<T>): T[] {
+	const result: T[] = [];
+	const stack = [...nestedArray];
+
+	while (stack.length) {
+		const next = stack.pop()!;
+		if (Array.isArray(next)) {
+			stack.push(...next);
+		} else {
+			result.push(next);
 		}
-	})(nestedArray);
+	}
 
-	//TODO: check logic in MicrosoftSql.node.ts
-
-	return result as any;
+	return result.reverse();
 }
 
 /**

@@ -2,6 +2,7 @@ import type { INodeExecutionData } from 'n8n-workflow';
 
 import {
 	compareItems,
+	flatten,
 	flattenKeys,
 	fuzzyCompare,
 	getResolvables,
@@ -157,6 +158,22 @@ describe('shuffleArray', () => {
 		expect(toShuffle).not.toEqual(array);
 		expect(toShuffle).toHaveLength(array.length);
 		expect(toShuffle).toEqual(expect.arrayContaining(array));
+	});
+});
+
+describe('flatten', () => {
+	it('should flatten nested arrays', () => {
+		expect(
+			flatten([
+				[1, 2],
+				[3, [4]],
+			]),
+		).toEqual([1, 2, 3, 4]);
+	});
+
+	it('should keep inner arrays within objects intact', () => {
+		const nested = [[{ id: 1, values: [1, 2] }], [{ id: 2 }]];
+		expect(flatten(nested)).toEqual([{ id: 1, values: [1, 2] }, { id: 2 }]);
 	});
 });
 

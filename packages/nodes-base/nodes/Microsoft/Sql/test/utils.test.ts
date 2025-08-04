@@ -190,6 +190,23 @@ describe('MSSQL tests', () => {
 			]);
 		});
 
+		it('should flatten deeply nested recordsets', async () => {
+			querySpy.mockResolvedValueOnce({
+				recordsets: [[[{ id: 1 }], [{ id: 2 }]], [{ name: 'Test' }]] as unknown,
+				rowsAffected: [1, 1, 1],
+				output: {},
+			} as unknown as IResult<unknown>);
+
+			const pool = { request: () => new Request() } as any as mssql.ConnectionPool;
+			const result = await executeSqlQueryAndPrepareResults(pool, 'SELECT * FROM nested', 2);
+
+			expect(result).toEqual([
+				{ json: { id: 1 }, pairedItem: [{ item: 2 }] },
+				{ json: { id: 2 }, pairedItem: [{ item: 2 }] },
+				{ json: { name: 'Test' }, pairedItem: [{ item: 2 }] },
+			]);
+		});
+
 		it('should handle non-SELECT query', async () => {
 			querySpy.mockResolvedValueOnce({
 				recordsets: [],
