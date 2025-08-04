@@ -7,10 +7,13 @@ import {
 	ManyToMany,
 	ManyToOne,
 	OneToMany,
+	BeforeInsert,
+	BeforeUpdate,
 } from '@n8n/typeorm';
 import { Length } from 'class-validator';
 import { IConnections, IDataObject, IWorkflowSettings, WorkflowFEMeta } from 'n8n-workflow';
 import type { IBinaryKeyData, INode, IPairedItemData } from 'n8n-workflow';
+import { sanitizeWorkflowName } from '../utils/sanitize-workflow-name';
 
 import { JsonColumn, WithTimestampsAndStringId, dbType } from './abstract-entity';
 import { type Folder } from './folder';
@@ -23,13 +26,18 @@ import { objectRetriever, sqlite } from '../utils/transformers';
 
 @Entity()
 export class WorkflowEntity extends WithTimestampsAndStringId implements IWorkflowDb {
-	// TODO: Add XSS check
 	@Index({ unique: true })
 	@Length(1, 128, {
 		message: 'Workflow name must be $constraint1 to $constraint2 characters long.',
 	})
 	@Column({ length: 128 })
 	name: string;
+
+	@BeforeInsert()
+	@BeforeUpdate()
+	sanitizeName(): void {
+		if (this.name) this.name = sanitizeWorkflowName(this.name);
+	}
 
 	@Column()
 	active: boolean;
