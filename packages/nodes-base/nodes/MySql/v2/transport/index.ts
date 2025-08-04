@@ -64,8 +64,8 @@ export async function createPool(
 	if (!credentials.sshTunnel) {
 		return mysql2.createPool(connectionOptions);
 	} else {
-		if (credentials.sshAuthenticateWith === 'privateKey' && credentials.privateKey) {
-			credentials.privateKey = formatPrivateKey(credentials.privateKey);
+		if (credentials.sshAuthenticateWith === 'privateKey' && credentials.sshPrivateKey) {
+			credentials.sshPrivateKey = formatPrivateKey(credentials.sshPrivateKey);
 		}
 		const sshClient = await this.helpers.getSSHClient(credentials);
 

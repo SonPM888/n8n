@@ -821,10 +821,8 @@ export type SSHCredentials = {
 	  }
 	| {
 			sshAuthenticateWith: 'privateKey';
-			// TODO: rename this to `sshPrivateKey`
-			privateKey: string;
-			// TODO: rename this to `sshPassphrase`
-			passphrase?: string;
+			sshPrivateKey: string;
+			sshPassphrase?: string;
 	  }
 );
 
