@@ -34,8 +34,8 @@ export class SSHClientsManager {
 			...(sshAuthenticateWith === 'password'
 				? { password: credentials.sshPassword }
 				: {
-						privateKey: credentials.privateKey,
-						passphrase: credentials.passphrase ?? undefined,
+						privateKey: credentials.sshPrivateKey,
+						passphrase: credentials.sshPassphrase ?? undefined,
 					}),
 		};
 
