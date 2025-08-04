@@ -294,9 +294,10 @@ export class MicrosoftSql implements INodeType {
 					rawQuery = rawQuery.replace(resolvable, this.evaluateExpression(resolvable, 0) as string);
 				}
 
-				const { recordsets }: IResult<any[]> = await pool.request().query(rawQuery);
+				const { recordsets }: IResult<IDataObject> = await pool.request().query(rawQuery);
 
-				const result = recordsets.length > 1 ? flatten(recordsets) : recordsets[0];
+				const result: IDataObject[] =
+					recordsets.length > 1 ? flatten<IDataObject>(recordsets) : recordsets[0];
 
 				responseData = result;
 			}
